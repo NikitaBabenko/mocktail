@@ -4,9 +4,9 @@
 
 **VibeNest pilot — NOT READY: runtime acceptance pending.**
 
-![Deploy to VibeNest — acceptance pending](https://img.shields.io/badge/Deploy_to_VibeNest-acceptance_pending-lightgrey)
+[![Deploy to VibeNest — pilot, acceptance pending](https://img.shields.io/badge/Deploy_to_VibeNest-pilot_acceptance_pending-lightgrey)](https://vibenest.net/deploy?repo=https://github.com/NikitaBabenko/mocktail&branch=master)
 
-This inactive badge is not a launch claim. See [the guided pilot recipe](VIBENEST.md)
+This pilot button is available for acceptance testing; Free-tier operation is not yet verified. See [the guided pilot recipe](VIBENEST.md)
 for the intended URL, required secrets, storage, provenance, and known limitations.
 
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/hhaluk/mocktail?color=blue&logo=docker)
