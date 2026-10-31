@@ -2,7 +2,8 @@
 
 This fork retains Mocktail v4.1.0 and its MIT license. It packages the publisher's
 linux/amd64 binary with a small startup guard. No Go/React source has been changed.
-Free-tier runtime, login handoff, persistence, and resource use are **not verified**.
+The button preserves the repository and branch through existing-user login.
+Free-tier runtime, persistence, and resource use are **not verified**.
 There is no public demo yet. Do not treat this as an accepted one-click deployment.
 
 ## Intended entry point
@@ -11,8 +12,8 @@ There is no public demo yet. Do not treat this as an accepted one-click deployme
 https://vibenest.net/deploy?repo=https://github.com/NikitaBabenko/mocktail&branch=master
 ```
 
-The README badge remains inactive until the full path is accepted. The platform
-entry point must preserve this repository and `master` through preview and login.
+The README button is explicitly labelled as a pilot with acceptance pending.
+The platform entry point preserves this repository and `master` through preview and login.
 An existing-user login does not demonstrate new-user registration.
 
 For this controlled acceptance, first create a blank project through the normal
@@ -76,7 +77,29 @@ source builds on a constrained host without a separately approved build slot.
 The binary was inspected as data, never executed during static preparation.
 This evidence does not replace VibeNest's normal security gate.
 
-## Acceptance recipe (pending a runtime slot)
+## Observed button-routing blocker — 2026-10-31
+
+On platform revision `26261cb5fcaec1b05781560ca5ccda529e38979d`, the real README
+button opens an anonymous preview that detects four monorepo candidates despite
+the root Dockerfile. Registration and existing-user login preserve the repo and
+`master`, but route to **New Project Group**, rather than reuse the prepared
+single-service project. One normal analysis then proposes a root Dockerfile API,
+a separate Nixpacks UI, and a separate Nixpacks MCP server. The review has no
+option to reuse the prepared single-service project.
+
+The wizard was not deployed. Removing extra service cards would still create a
+new group and would not demonstrate reuse of the prepared project. No source
+files were deleted or query parameters changed to defeat detection. The current
+button path is not accepted, and no application runtime, resource fit, or SQLite
+persistence has been verified.
+
+The clean draft was prepared through native settings with two distinct persistent
+keys and `/db`. Since saving a volume triggers deployment, the repo was temporarily
+blank during that save; the normal dispatcher declined the launch before hardware
+or provider work. The exact repo/branch were restored afterward. This manual
+preparation is not a virgin one-click installation.
+
+## Acceptance recipe (remaining, not executed)
 
 1. Follow the intended entry point anonymously and verify repo/branch after login.
    Record clean environment/volume setup separately from any reuse.
