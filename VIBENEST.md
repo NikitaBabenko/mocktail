@@ -1,30 +1,66 @@
-# Mocktail on VibeNest вЂ” pilot, not yet accepted
+# Mocktail on VibeNest — controlled pilot, Free acceptance blocked
 
-This fork retains Mocktail v4.1.0 and its MIT license. It packages the publisher's
-linux/amd64 binary with a small startup guard. No Go/React source bytes have been changed. The complete upstream tree is
-preserved under `upstream/source/`; root is a single-server deployment adapter.
-The button preserves the repository and branch through existing-user login.
-Free-tier runtime, persistence, and resource use are **not verified**.
-There is no public demo yet. Do not treat this as an accepted one-click deployment.
+This fork preserves all 162 upstream tracked files and their original bytes and
+Git modes under `upstream/source/`, plus the MIT license and Git history. The root
+Dockerfile packages the publisher's pinned embedded-UI binary with a startup guard.
+No Go/React source was changed. Fork Actions are disabled; no CI run was triggered.
 
-## Intended entry point
+[Deploy to VibeNest — pilot only](https://vibenest.net/deploy?repo=https://github.com/NikitaBabenko/mocktail&branch=master)
 
-```text
-https://vibenest.net/deploy?repo=https://github.com/NikitaBabenko/mocktail&branch=master
-```
+## Acceptance observed 2026-10-31
 
-The README button is explicitly labelled as a pilot with acceptance pending.
-The platform entry point preserves this repository and `master` through preview and login.
-An existing-user login does not demonstrate new-user registration.
+Tested fork revision: `6031d73a0809919da31b1044a300a97049c85502`.
+Platform revision: `26261cb5fcaec1b05781560ca5ccda529e38979d`.
 
-For this controlled acceptance, first create a blank project through the normal
-dashboard with no repository, then save this repository and `master` in Settings.
-This establishes an exact project ID without creating an application, claiming
-hardware, or dispatching a deployment. Check that ID's current `IsBlocked` and
-`SafetyHoldId` before any launch-capable action. Only after a runtime slot is
-assigned and the draft is safely configured may the button/login path reuse it.
-Record this honestly as a clean, prepared-draft reuse, not a virgin one-click launch.
-If the live UI differs, stop before an action that could automatically dispatch.
+- Real README button → anonymous preview → existing-user login → normal gated
+  launch passed, preserving the repository and `master`. **New-user registration
+  was not tested.** This reused a clean, manually prepared project with two stable
+  secret keys and a `/db` volume; it was not an unattended first installation.
+- Public HTTPS dashboard, protected management/API access, GET 200 `{"ok":true}`,
+  POST 201 `{"created":true}`, custom `X-Pilot: mocktail` response header, and
+  synthetic POST payload inspection in Live passed. Missing and forged keys were
+  rejected. AI was unconfigured and no AI provider calls were made.
+- Both mock definitions and their original IDs survived a native owner operation
+  that replaced the application container. The same keys still worked, and the
+  original SQLite named volume remained mounted at `/db`.
+- The app alone had an actual 256 MiB RAM/swap cap and 25,000/100,000 CPU quota
+  (0.25 host CPU, equivalent to the assigned 0.5 platform CPU on this host).
+  Initial functional cgroup memory peak was 5,898,240 bytes; process RSS/HWM was
+  22,776 KiB. After replacement, peak was 5,234,688 bytes and RSS/HWM 22,200 KiB.
+  These are short, sequential synthetic checks, not load capacity estimates.
+  OOM events and restart count were zero. Writable layer was 8,192 bytes and
+  root filesystem 36,483,072 bytes; the persistent volume is separate.
+
+**The overall initial Free deployment did not pass.** VibeNest detected an
+indirect MySQL driver in upstream `go.mod` and automatically provisioned a second,
+unneeded MySQL service. It had no RAM/CPU cap and used about 430 MiB. The app's
+256 MiB cap therefore did not bound the whole deployment. This database contained
+no user tables/routines/events/triggers and was removed with the normal owner
+Detach workflow; SQLite data was retained and verified afterward.
+
+The project still has the platform's cached MySQL requirement. The inspected
+existing-project UI/API has no supported opt-out or way to adopt a repository
+manifest when its previous manifest binding is absent. A normal future deploy
+can recreate the extra database. Adding a manifest alone would not repair this
+existing project. No SQL override, dependency deletion, cloned project, or gate
+bypass was used. **Do not describe this as an accepted one-click Free deployment
+or an outreach-ready integration.** The temporary acceptance app is not a
+maintained public demo and is stopped after verification.
+
+## Guided preparation used in the test
+
+A blank draft was created through normal settings. Two different keys were saved
+and `/db` was configured before launch. Since volume attachment itself can trigger
+a deploy, its save was performed with the repository temporarily blank; the normal
+dispatcher declined before provider/hardware work. The exact repository and branch
+were then restored, and the real README button reused this prepared draft. This
+manual setup is part of the evidence, not an automatic storage claim.
+
+The old layout at `cc9499e9e5c66a38ee58f210ea6b817ce745491c` entered a new-group
+wizard with separate UI/API/MCP candidates. No group was launched there. Moving
+the complete, byte-preserved upstream tree under `upstream/source/` resolved that
+routing issue at `6031d73`; all security-candidate source files remained visible
+to recursive scanning. No source/test/example was removed to satisfy a gate.
 
 ## Guided setup, before the first launch
 
@@ -78,63 +114,23 @@ source builds on a constrained host without a separately approved build slot.
 The binary was inspected as data, never executed during static preparation.
 This evidence does not replace VibeNest's normal security gate.
 
-## Observed button-routing blocker вЂ” 2026-10-31
+## Operational limitations
 
-On platform revision `26261cb5fcaec1b05781560ca5ccda529e38979d`, the real README
-button opens an anonymous preview that detects four monorepo candidates despite
-the root Dockerfile. Registration and existing-user login preserve the repo and
-`master`, but route to **New Project Group**, rather than reuse the prepared
-single-service project. One normal analysis then proposes a root Dockerfile API,
-a separate Nixpacks UI, and a separate Nixpacks MCP server. The review has no
-option to reuse the prepared single-service project.
+The current v4.1.0 dashboard's Copy URL/host display hardcodes localhost. Although
+upstream documentation advertises `MOCKTAIL_BASE_URL`, setting it did not correct
+those controls in this tested build. Use the actual HTTPS host plus
+`/mocktail/pilot-get` or `/mocktail/pilot-post` in an external client.
+The built-in Test does not propagate `X-API-Key`, so it returns 401 with this
+configuration; external keyed requests work.
 
-This was observed at fork `cc9499e9e5c66a38ee58f210ea6b817ce745491c`.
-The subsequent source-preserving layout presents one binary adapter at root,
-with all 162 upstream tracked files byte-for-byte under `upstream/source/`.
-The new layout still requires actual button-path acceptance.
+Use `X-Admin-Key` only for management and `X-API-Key` for mock requests. Do not
+place keys in query strings. Mocktail redacts these two headers in request logs,
+but retains arbitrary client Authorization/Cookie headers and bodies. This pilot
+used only synthetic data. Live history is in memory and resets on container
+replacement; the mock definitions are persisted in SQLite.
 
-The wizard was not deployed. Removing extra service cards would still create a
-new group and would not demonstrate reuse of the prepared project. No source
-files were deleted or query parameters changed to defeat detection. The current
-button path is not accepted, and no application runtime, resource fit, or SQLite
-persistence has been verified.
-
-The clean draft was prepared through native settings with two distinct persistent
-keys and `/db`. Since saving a volume triggers deployment, the repo was temporarily
-blank during that save; the normal dispatcher declined the launch before hardware
-or provider work. The exact repo/branch were restored afterward. This manual
-preparation is not a virgin one-click installation.
-
-## Acceptance recipe (remaining, not executed)
-
-1. Follow the intended entry point anonymously and verify repo/branch after login.
-   Record clean environment/volume setup separately from any reuse.
-2. Confirm both keys, /db storage, assigned Free hardware and allowed project state
-   before the normal gated launch. Record the exact fork SHA and deployed image.
-3. Open the public HTTPS dashboard and enter the management key in its passcode
-   prompt. Static assets and `/health` are public; management is protected.
-4. Check missing and forged keys receive 401 for `/core/v1/apis`, `/core/v1/logs`,
-   and `/core/v1/logs/{id}`. Check missing/forged mock API keys also receive 401.
-5. Create `GET /pilot-get` with status 200, body `{"ok":true}`, and header
-   `X-Pilot: mocktail`; create `POST /pilot-post` with status 201 and body
-   `{"created":true}`. Keep delay 0 and randomization off.
-6. Use a client sending `X-API-Key` to `/mocktail/pilot-get` and
-   `/mocktail/pilot-post`; send only inert synthetic content. Confirm exact status,
-   JSON, response header, and the POST payload in the dashboard Live view.
-   The upstream dashboard's built-in Test does **not** propagate the mock API key
-   and will return 401 with this configuration. External keyed requests are needed.
-7. Record startup, idle and peak memory, actual RAM/CPU cgroups, CPU use, disk,
-   OOM events and restarts. Make only a few sequential small requests; no load test.
-8. Through normal gated restart/redeploy, confirm the same SQLite mocks and the
-   same secret environment still work. Live request history is in-memory and is
-   expected to reset; it is not persisted in SQLite.
-9. Stop only the assigned temporary pilot using normal platform actions, preserve
-   its data/evidence, and release the shared test slot.
-
-Mocktail redacts its own two key headers in request logs, but intentionally retains
-client Authorization/Cookie headers and bodies. Never send real client secrets or
-personal data in this pilot. No arbitrary outbound-fetch feature was found in the
-fixed-mock path; AI can make server-side HTTP calls when configured and is excluded.
-
-Fork Actions are disabled. No build, tests executing application code, or runtime
-acceptance has been run for this packaging change.
+The empty MySQL cleanup did not invoke a paid backup. The inspected platform's
+managed-database backup adapter sends an empty POST to the provider's scheduled
+configuration endpoint; that is not a verified immediate-backup contract. Do not
+use this empty-test-resource cleanup as a procedure for deleting a database with
+data. Preserve data and use a verified backup/recovery path for real databases.

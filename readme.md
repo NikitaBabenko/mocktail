@@ -1,6 +1,6 @@
 # Mocktail — VibeNest deployment pilot
 
-**NOT READY: full runtime acceptance is pending.**
+**Pilot only: functions and SQLite persistence verified; full Free deployment acceptance blocked.**
 
 [![Deploy to VibeNest — pilot, acceptance pending](https://img.shields.io/badge/Deploy_to_VibeNest-pilot_acceptance_pending-lightgrey)](https://vibenest.net/deploy?repo=https://github.com/NikitaBabenko/mocktail&branch=master)
 
@@ -35,7 +35,15 @@ the root while retaining the complete upstream tree for inspection. Security
 scanning must still inspect all source recursively; this layout grants no
 clearance and changes no platform limits or gates.
 
-The original layout preserved repository/branch through existing-user login, but
-could not reuse the prepared single-service draft. This revised layout still
-requires a fresh real button-path test. No public demo, Free-tier runtime fit,
-authentication acceptance, or SQLite persistence is claimed yet.
+The revised layout was tested at `6031d73a0809919da31b1044a300a97049c85502`:
+the real button preserved repository/branch through existing-user login and
+launched the prepared single-service draft through the normal gate. Protected
+GET/POST mocks and SQLite persistence after container replacement passed.
+
+**Full Free acceptance remains blocked.** The platform also auto-created an
+unneeded, uncapped MySQL database from an indirect upstream dependency. That
+empty test database was removed through the normal owner workflow. The current
+existing-project controls cannot disable its creation on a future deployment.
+Do not use this pilot as an unattended deployment recommendation. The temporary
+acceptance app is not a maintained public demo. See [the evidence summary and
+limitations](VIBENEST.md#acceptance-observed-2026-10-31).
