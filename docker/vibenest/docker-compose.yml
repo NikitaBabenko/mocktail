@@ -2,7 +2,7 @@
 # configure its /db persistent volume and both secret environment variables first.
 services:
   mocktail:
-    build: .
+    build: ../..
     ports:
       - "127.0.0.1:6625:6625"
     environment:

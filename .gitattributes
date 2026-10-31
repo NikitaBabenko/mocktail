@@ -1,1 +1,3 @@
 docker/vibenest/*.sh text eol=lf
+# Preserve all upstream blobs byte-for-byte, including original line endings.
+upstream/source/** -text

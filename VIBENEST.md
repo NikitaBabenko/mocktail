@@ -1,7 +1,8 @@
-# Mocktail on VibeNest — pilot, not yet accepted
+# Mocktail on VibeNest вЂ” pilot, not yet accepted
 
 This fork retains Mocktail v4.1.0 and its MIT license. It packages the publisher's
-linux/amd64 binary with a small startup guard. No Go/React source has been changed.
+linux/amd64 binary with a small startup guard. No Go/React source bytes have been changed. The complete upstream tree is
+preserved under `upstream/source/`; root is a single-server deployment adapter.
 The button preserves the repository and branch through existing-user login.
 Free-tier runtime, persistence, and resource use are **not verified**.
 There is no public demo yet. Do not treat this as an accepted one-click deployment.
@@ -56,8 +57,8 @@ ephemeral `/tmp/mocktail-config`, separate from `/db`. Verify AI reports
 `configured: false`; do not add provider keys or call AI features.
 
 The image is pinned for **linux/amd64**. It uses COPY and metadata instructions
-only; it does not compile dependencies. Original build/Compose files remain under
-`docker/upstream/`, with repository root as their build context. Never use those
+only; it does not compile dependencies. All original build/Compose/source files remain under
+`upstream/source/`, which is their unchanged original build context. Never use those
 source builds on a constrained host without a separately approved build slot.
 
 ## Image provenance checked 2026-10-31
@@ -77,7 +78,7 @@ source builds on a constrained host without a separately approved build slot.
 The binary was inspected as data, never executed during static preparation.
 This evidence does not replace VibeNest's normal security gate.
 
-## Observed button-routing blocker — 2026-10-31
+## Observed button-routing blocker вЂ” 2026-10-31
 
 On platform revision `26261cb5fcaec1b05781560ca5ccda529e38979d`, the real README
 button opens an anonymous preview that detects four monorepo candidates despite
@@ -86,6 +87,11 @@ the root Dockerfile. Registration and existing-user login preserve the repo and
 single-service project. One normal analysis then proposes a root Dockerfile API,
 a separate Nixpacks UI, and a separate Nixpacks MCP server. The review has no
 option to reuse the prepared single-service project.
+
+This was observed at fork `cc9499e9e5c66a38ee58f210ea6b817ce745491c`.
+The subsequent source-preserving layout presents one binary adapter at root,
+with all 162 upstream tracked files byte-for-byte under `upstream/source/`.
+The new layout still requires actual button-path acceptance.
 
 The wizard was not deployed. Removing extra service cards would still create a
 new group and would not demonstrate reuse of the prepared project. No source
