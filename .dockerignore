@@ -42,3 +42,6 @@ mocktail-api/.env
 # OS
 .DS_Store
 Thumbs.db
+
+# Retain the upstream license in the pilot image.
+!LICENSE

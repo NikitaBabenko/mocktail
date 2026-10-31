@@ -2,6 +2,13 @@
 
 # Mocktail
 
+**VibeNest pilot — NOT READY: runtime acceptance pending.**
+
+![Deploy to VibeNest — acceptance pending](https://img.shields.io/badge/Deploy_to_VibeNest-acceptance_pending-lightgrey)
+
+This inactive badge is not a launch claim. See [the guided pilot recipe](VIBENEST.md)
+for the intended URL, required secrets, storage, provenance, and known limitations.
+
 ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/hhaluk/mocktail?color=blue&logo=docker)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/hhaluk/mocktail?color=B4D4A55&logo=docker)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hhaluk/mocktail?label=stable-version&logo=docker&sort=semver&style=flat-square)

@@ -1,42 +1,16 @@
-# UI assets are arch-independent — build once on the native (build) platform, never under emulation.
-FROM --platform=$BUILDPLATFORM node:20-alpine AS builder-ui
+# VibeNest pilot: packaging only, no RUN instruction or source compilation.
+# Upstream v4.1.0 / 9b57dc10878facd211a7fef75a962afc4dc3ed51, linux/amd64.
+# Original source build: docker/upstream/Dockerfile with repository root context.
+FROM hhaluk/mocktail@sha256:5e201870d5e2f22687ba41fb55a1219d3af80e393a611402e2038f5f6d3cbd6a AS upstream
+FROM alpine@sha256:3d67941fed5ae436b2bb9791cb3f50a252441c7706bbc5b4e738936df8ff8306
 
-WORKDIR /src
+COPY --from=upstream /app /app
+COPY docker/vibenest/entrypoint.sh /entrypoint.sh
+COPY LICENSE /usr/share/licenses/mocktail/LICENSE
 
-# Copy dependency manifests first for better layer caching
-COPY ./mocktail-ui/package.json ./mocktail-ui/yarn.lock ./
-RUN --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile --network-timeout 600000
-
-# Copy source and build (Vite → ./build)
-COPY ./mocktail-ui .
-RUN yarn build
-
-# Run the Go toolchain on the native (build) platform and CROSS-COMPILE to the target arch.
-# Building arm64 without this ran the whole compiler under QEMU emulation — hours-long / hanging
-# builds. With GOARCH from buildx's TARGETARCH the compile is native and fast on every arch.
-FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS builder-api
-
-WORKDIR /src
-COPY ./mocktail-api .
-RUN go mod download
-
-# Stage the built dashboard where go:embed expects it, then build — the UI is baked into the
-# binary (no separate ./build at runtime).
-COPY --from=builder-ui /src/build ./build
-
-# Cross-compile: GOARCH = buildx's TARGETARCH (amd64 | arm64). Pure Go (ncruces/go-sqlite3 via
-# WASM) — no C toolchain. -s -w strips debug symbols/DWARF (~12 MB smaller binary).
-ARG TARGETARCH
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -ldflags="-s -w" -o /app .
-
-FROM scratch
-
-COPY --from=builder-api /app /app
+ENV MOCKTAIL_DB_PATH=/db/apis.db MOCKTAIL_PORT=6625 \
+    MOCKTAIL_LOG_BUFFER_MB=8 MOCKTAIL_LOG_BODY_KB=8 \
+    GOMEMLIMIT=160MiB GOMAXPROCS=1
 EXPOSE 6625
-
-# Keep the DB at /db (mounted as a volume in docker-compose) — scratch has no HOME, so the
-# app-data default can't resolve here; this pins it explicitly and preserves existing volumes.
-ENV MOCKTAIL_DB_PATH=/db/apis.db
-
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
+CMD []
